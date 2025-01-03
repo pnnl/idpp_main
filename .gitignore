@@ -1,0 +1,166 @@
+.DS_Store
+
+# files that are generated in the demos/ dir that are not notebooks
+demos/*
+!demos/*.ipynb
+!demos/*.py
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# C extensions
+*.so
+
+# no need to track documentation build files
+docs/build/
+
+# Distribution / packaging
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# PyInstaller
+#  Usually these files are written by a python script from a template
+#  before PyInstaller builds the exe, so as to inject date/other infos into it.
+*.manifest
+*.spec
+# exception for experiment.spec and yamlwrite.spec
+!experiment.spec
+!yamlwriter.spec
+
+# Installer logs
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+.hypothesis/
+.pytest_cache/
+
+# Translations
+*.mo
+*.pot
+
+# Django stuff:
+*.log
+local_settings.py
+db.sqlite3
+
+# Flask stuff:
+instance/
+.webassets-cache
+
+# Scrapy stuff:
+.scrapy
+
+# Sphinx documentation
+docs/_build/
+
+# PyBuilder
+target/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# IPython
+profile_default/
+ipython_config.py
+
+# pyenv
+.python-version
+
+# celery beat schedule file
+celerybeat-schedule
+
+# SageMath parsed files
+*.sage.py
+
+# Environments
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Spyder project settings
+.spyderproject
+.spyproject
+
+# Rope project settings
+.ropeproject
+
+# mkdocs documentation
+/site
+
+# mypy
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# Pyre type checker
+.pyre/
+
+# NodeJS/GUI related
+gui/node_modules/
+gui/npm-debug.log
+gui/yarn-error.log
+gui/package-lock.json
+gui/yarn.lock
+
+# Electron-builder output
+gui/dist/
+gui/build/
+gui/out/
+
+# OS generated files
+gui/.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*.orig
+
+# GUI Editor directories
+gui/.vscode/
+gui/.idea/
+
+# Other GUI directories/files
+gui/logs/
+gui/*.log
+gui/*.pid
+gui/*.seed
+
+
+# do not track static HTML in gui/src/docs/
+# those are generated with Sphinx (in docs/ dir) then copied there
+gui/src/docs/*
+# do track this README, it makes sure that the gui/src/docs/ directory actually gets tracked as well
+!gui/src/docs/README.txt
+
+
+.vscode/

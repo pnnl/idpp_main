@@ -1,0 +1,362 @@
+-- DATABASE SCHEMA FOR COLLECTION OF EXPERIMENTAL AND PREDICTED PROPERTIES
+
+
+-- table with descriptions of columns from all other tables
+CREATE TABLE _TableDescriptions (
+    tab_name TEXT NOT NULL,
+    col_name TEXT NOT NULL,
+    col_desc TEXT NOT NULL
+);
+
+
+--========================================
+--         VERSIONING & CHANGELOG
+--========================================
+
+
+----------------- VersionInfo -----------------
+
+-- table with compatible version information for software that
+-- interfaces with this database
+CREATE TABLE VersionInfo (
+    python_ver TEXT NOT NULL,
+    idpp_ver TEXT NOT NULL,
+    db_ver TEXT NOT NULL
+) STRICT;
+
+-- add table description
+INSERT INTO _TableDescriptions VALUES 
+    ('VersionInfo', 'python_ver', 'minimum known compatible Python interpreter version'),
+    ('VersionInfo', 'idpp_ver', 'idpp Python package version (format: "release.major_version.minor_version")'),
+    ('VersionInfo', 'db_ver', 'database version, format YYMMDD.hh.mm taken from the timestamp of the most recent change log entry');
+
+
+----------------- ChangeLog -----------------
+
+-- table for tracking changes/updates to the database
+CREATE TABLE ChangeLog (
+    tstamp TEXT NOT NULL,
+    author TEXT NOT NULL,
+    notes TEXT NOT NULL
+) STRICT;
+
+-- add table description
+INSERT INTO _TableDescriptions VALUES 
+    ('ChangeLog', 'tstamp', 'timestamp for database changes (format: YY/MM/DD-hh:mm)'),
+    ('ChangeLog', 'author', 'who is responsible for the changes'),
+    ('ChangeLog', 'notes', 'description of the changes/updates made to the database');
+
+
+--========================================
+--              METADATA
+--========================================
+
+
+----------------- Sources ----------------
+
+-- table with data source information
+CREATE TABLE Sources (
+    src_id INTEGER PRIMARY KEY,
+    src_name TEXT NOT NULL,
+    src_ref TEXT NOT NULL,
+    src_notes TEXT
+) STRICT;
+-- add a placeholder value to make it easier to add entries to other tables
+-- where this ID is required
+INSERT INTO Sources VALUES
+    (-1, 'INVALID', 'INVALID', NULL);
+
+-- add table description
+INSERT INTO _TableDescriptions VALUES 
+    ('Sources', 'src_id', 'unique source identifier'),
+    ('Sources', 'src_name', 'short name for source'),
+    ('Sources', 'src_ref', 'source reference / url / DOI'),
+    ('Sources', 'src_notes', 'misc notes about the source');
+
+
+----------------- Compounds ----------------
+
+-- table with compound information
+-- each compound is represented by a name and molecular formula (in Formulas table via form_id)
+-- the compound may optionally be linked to a SMILES structure via smi_id
+-- and/or InChI (or InChI key) via inchi_id
+CREATE TABLE Compounds (
+    cmpd_id INTEGER PRIMARY KEY,
+    cmpd_name TEXT NOT NULL,
+    form_id INT NOT NULL,
+    smi_id INT NOT NULL,
+    inchi_id INT NOT NULL
+) STRICT;
+-- add a placeholder value to make it easier to add entries to other tables
+-- where this ID is required
+INSERT INTO Compounds VALUES
+    (-1, 'INVALID', -1, -1, -1);
+
+-- add table description
+INSERT INTO _TableDescriptions VALUES 
+    ('Compounds', 'cmpd_id', 'unique compound identifier'),
+    ('Compounds', 'cmpd_name', 'compound name'),
+    ('Compounds', 'form_id', 'ID from Formulas table, linking to molecular formula for this compound'),
+    ('Compounds', 'smi_id', 'ID from Smiles table, linking to SMILES structure for this compound'),
+    ('Compounds', 'inchi_id', 'ID from InChIs table, linking to InChI/InChI key for this compound');
+
+
+----------------- ClassDefs ----------------
+
+-- table with definitions of classifications for compounds
+-- entries from this definitions table are mapped to compounds in
+-- the ClassLabels table
+CREATE TABLE ClassDefs (
+    cls_id INTEGER PRIMARY KEY,
+    cls_name TEXT NOT NULL,
+    cls_desc TEXT
+) STRICT;
+
+-- add table description
+INSERT INTO _TableDescriptions VALUES 
+    ('ClassDefs', 'cls_id', 'unique classification identifier'),
+    ('ClassDefs', 'cls_name', 'classification name'),
+    ('ClassDefs', 'cls_desc', 'longer description of classification');
+
+
+----------------- ClassLabels ----------------
+
+-- table with classification labels for compounds
+-- classifications (by cls_id) are mapped to compounds by cmpd_id
+CREATE TABLE ClassLabels (
+    cls_id INT NOT NULL,
+    cmpd_id INT NOT NULL
+) STRICT;
+
+-- add table description
+INSERT INTO _TableDescriptions VALUES 
+    ('ClassLabels', 'cls_id', 'unique classification identifier'),
+    ('ClassLabels', 'cmpd_id', 'unique compound identifier');
+
+
+----------------- Adducts ----------------
+
+-- table with adduct information
+-- each adduct has an adduct type, corresponding z and m/z
+-- and is linked to a neutral compound (in Compounds table via cmpd_id)
+-- and molecular formula (in Formulas table via form_id)
+CREATE TABLE Adducts (
+    adduct_id INTEGER PRIMARY KEY,
+    adduct TEXT NOT NULL,
+    cmpd_id INT NOT NULL,
+    adduct_z INT NOT NULL,
+    adduct_mz REAL NOT NULL
+) STRICT;
+-- add a placeholder value to make it easier to add entries to other tables
+-- where this ID is required
+INSERT INTO Adducts VALUES
+    (-1, 'INVALID', -1, 0, -1);
+
+-- add table description
+INSERT INTO _TableDescriptions VALUES 
+    ('Adducts', 'adduct_id', 'unique adduct identifier'),
+    ('Adducts', 'adduct', 'adduct name'),
+    ('Adducts', 'cmpd_id', 'ID from Compounds table, linking to neutral compound info'),
+    ('Adducts', 'adduct_z', 'adduct charge'),
+    ('Adducts', 'adduct_mz', 'compound m/z');
+
+
+----------------- Formulas ----------------
+
+-- table with molecular formulas
+-- molecular formulas should have consistent ordering of atom counts (low->high mass)
+CREATE TABLE Formulas (
+    form_id INTEGER PRIMARY KEY,
+    form TEXT NOT NULL
+) STRICT;
+-- add a placeholder value to make it easier to add entries to other tables
+-- where this ID is required
+INSERT INTO Formulas VALUES
+    (-1, 'INVALID');
+
+-- add table description
+INSERT INTO _TableDescriptions VALUES 
+    ('Formulas', 'form_id', 'unique formula identifier'),
+    ('Formulas', 'form', 'molecular formula, use consistent atom ordering (low->high mass)');
+
+
+----------------- ExternalIDs ----------------
+
+-- table for mapping compounds to external identifiers (linked to a source)
+CREATE TABLE ExternalIDs (
+    cmpd_id INT NOT NULL,
+    src_id INT NOT NULL,
+    ext_id TEXT NOT NULL
+) STRICT;
+
+-- add table description
+INSERT INTO _TableDescriptions VALUES 
+    ('ExternalIDs', 'cmpd_id', 'compound identifier'),
+    ('ExternalIDs', 'src_id', 'source identifier'),
+    ('ExternalIDs', 'ext_id', 'external ID');
+
+
+----------------- Smiles ----------------
+
+-- table with SMILES structures
+CREATE TABLE Smiles (
+    smi_id INTEGER PRIMARY KEY,
+    smi TEXT NOT NULL
+) STRICT;
+-- add a placeholder value to make it easier to add entries to other tables
+-- where this ID is required
+INSERT INTO Smiles VALUES
+    (-1, 'INVALID');
+
+-- add table description
+INSERT INTO _TableDescriptions VALUES 
+    ('Smiles', 'smi_id', 'unique compound identifier'),
+    ('Smiles', 'smi', 'SMILES');
+
+
+----------------- InChIs ----------------
+
+-- table with InChI/InChI keys
+-- must have at least the key, InChI is optional
+CREATE TABLE InChIs (
+    inchi_id INTEGER PRIMARY KEY,
+    inchi_key TEXT NOT NULL,
+    inchi TEXT
+) STRICT;
+-- add a placeholder value to make it easier to add entries to other tables
+-- where this ID is required
+INSERT INTO InChIs VALUES
+    (-1, 'INVALID', NULL);
+
+-- add table description
+INSERT INTO _TableDescriptions VALUES 
+    ('InChIs', 'inchi_id', 'unique compound identifier'),
+    ('InChIs', 'inchi_key', 'InChI key'),
+    ('InChIs', 'inchi', 'InChI');
+
+
+--========================================
+--            PROPERTIES
+--========================================
+
+
+----------------- RTs ----------------
+
+-- table with retention times
+CREATE TABLE RTs (
+    rt_id INTEGER PRIMARY KEY,
+    rt REAL NOT NULL,
+    adduct_id INT NOT NULL,
+    src_id INT NOT NULL
+) STRICT;
+
+-- add table description
+INSERT INTO _TableDescriptions VALUES 
+    ('RTs', 'rt_id', 'unique RT identifier'),
+    ('RTs', 'rt', 'retention time'),
+    ('RTs', 'adduct_id', 'adduct identifier'),
+    ('RTs', 'src_id', 'source identifier');
+
+
+----------------- CCSs ----------------
+
+-- table with CCS values
+CREATE TABLE CCSs (
+    ccs_id INTEGER PRIMARY KEY,
+    ccs REAL NOT NULL,
+    adduct_id INT NOT NULL,
+    src_id INT NOT NULL
+) STRICT;
+
+-- add table description
+INSERT INTO _TableDescriptions VALUES 
+    ('CCSs', 'ccs_id', 'unique CCS identifier'),
+    ('CCSs', 'ccs', 'CCS'),
+    ('CCSs', 'adduct_id', 'adduct identifier'),
+    ('CCSs', 'src_id', 'source identifier');
+
+
+----------------- MS2 ----------------
+
+-- table with combined MS2 spectra (metadata)
+CREATE TABLE MS2Spectra (
+    ms2_id INTEGER PRIMARY KEY,
+    adduct_id INT NOT NULL,
+    ms2_n_spectra INT NOT NULL,
+    ms2_ce TEXT NOT NULL
+) STRICT;
+
+-- add table description
+INSERT INTO _TableDescriptions VALUES 
+    ('MS2Spectra', 'ms2_id', 'unique combined MS2 spectrum identifier'),
+    ('MS2Spectra', 'adduct_id', 'adduct identifier'),
+    ('MS2Spectra', 'ms2_n_spectra', 'number of individual spectra that make up this combined spectrum'),
+    ('MS2Spectra', 'ms2_ce', 'optionally store CE(s) for the spectrum (as voltage, comma separated)');
+
+
+-- table with combined MS2 spectra (fragments)
+CREATE TABLE MS2Fragments (
+    ms2_id INT NOT NULL,
+    frag_imz INT NOT NULL,
+    frag_ii INT NOT NULL
+) STRICT;
+
+-- add table description
+INSERT INTO _TableDescriptions VALUES
+    ('MS2Fragments', 'ms2_id', 'combined MS2 spectrum identifier'),
+    ('MS2Fragments', 'frag_imz', 'fragment m/z * 10^5 as integer'),
+    ('MS2Fragments', 'frag_ii', 'fragment relative intensity in ppm as integer with each spectrum summing to 1M');
+
+
+-- table with combined MS2 spectra (sources)
+CREATE TABLE MS2Sources (
+    ms2_id INT NOT NULL,
+    src_id INT NOT NULL
+) STRICT;
+
+-- add table description
+INSERT INTO _TableDescriptions VALUES
+    ('MS2Sources', 'ms2_id', 'combined MS2 spectrum identifier'),
+    ('MS2Sources', 'src_id', 'source identifier');
+
+
+--========================================
+--        PROBABILITY ANALYSIS
+--========================================
+
+
+-- table with dataset descriptions
+CREATE TABLE Datasets (
+    dataset_id INTEGER PRIMARY KEY,
+    dataset_desc TEXT NOT NULL,
+    dataset_qry TEXT NOT NULL
+) STRICT;
+
+-- add table description
+INSERT INTO _TableDescriptions VALUES
+    ('Datasets', 'dataset_id', 'unique dataset identifier'),
+    ('Datasets', 'dataset_desc', 'description of the dataset'),
+    ('Datasets', 'dataset_qry', 'query used for selection of the dataset');
+
+
+-- table with dataset descriptions
+CREATE TABLE AnalysisResults (
+    dataset_id INT NOT NULL,
+    n_cmpds INT NOT NULL,
+    mz_tol REAL NOT NULL,
+    rt_tol REAL,
+    ccs_tol REAL,
+    ms2_tol REAL,
+    counts BLOB NOT NULL
+) STRICT;
+
+-- add table description
+INSERT INTO _TableDescriptions VALUES
+    ('AnalysisResults', 'dataset_id', 'dataset identifier'),
+    ('AnalysisResults', 'n_cmpds', 'number of compounds in this result set (required)'),
+    ('AnalysisResults', 'mz_tol', 'm/z tolerance (ppm, required)'),
+    ('AnalysisResults', 'rt_tol', 'RT tolerance (min, optional)'),
+    ('AnalysisResults', 'ccs_tol', 'CCS tolerance (%, optional)'),
+    ('AnalysisResults', 'ms2_tol', 'MS/MS similarity threshold (optional)'),
+    ('AnalysisResults', 'counts', 'counts of matches using specified tolerances for each compound in dataset (numpy int32 array with length <n_cmpds>)');
+
