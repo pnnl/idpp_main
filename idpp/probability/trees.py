@@ -89,34 +89,6 @@ class MzTree(KDTree):
         """
         return self.mzs * ppm / 1e6
     
-    # def query_radius(self, 
-    #                  ppm : float
-    #                  ) -> npt.NDArray[Any] :
-    #     """
-    #     Search all of self.mzs against the KDTree using a radius (tolerance computed from specified ppm), 
-    #     returns an array of all matching indices for each element in self.mzs
-
-    #     .. note:: 
-
-    #         This method is a thin wrapper around the ``KDTree.query_radius(...)`` method, and
-    #         it returns the same array of arrays where each index in the first array contains
-    #         an array of matching indices from the query. This is not so useful for my ultimate
-    #         goal of coordinating the query results across multiple trees. So instead of using
-    #         this method directly, the ``query_all(...)`` method should be used instead which 
-    #         will take the output from this method and convert that into a dictionary that
-    #         will incorporate cmpd_id info as well.
-
-    #     Parameters
-    #     ----------
-    #     ppm : ``float``
-    #         search tolerance ppm
-
-    #     Returns
-    #     -------
-    #     TODO
-    #     """
-    #     return super().query_radius(self.mzs.reshape(-1, 1), self._ppm_to_tol(ppm))
-    
     def query_all(self, 
                   ppm: float
                   ) -> QueryResult :
@@ -685,8 +657,7 @@ class Ms2Tree:
         #       of query all is to see how MS/MS spectra can narrow down compound annotations, so while the 
         #       actual queries are run at the level of adducts, the results should ultimately be rolled up
         #       up to the compound level.
-        # EDIT: But does it actually though? Maybe it is more convenient to just deal with the matches at
-        #       the level of adducts instead?
+        
         # return {
         #     self.cmpd_ids[idx]: set([self.cmpd_ids[midx] for midx in matches]) 
         #     for idx, matches in enumerate(self.query_radius(tol))

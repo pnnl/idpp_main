@@ -8,6 +8,3 @@
 
 __version__ = "0.12.24"
 
-
-# TODO: Whenever this code gets moved to GitHub, go through and convert all the TODOs 
-#       littered throughout the codebase into issues.

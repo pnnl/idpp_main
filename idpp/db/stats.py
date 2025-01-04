@@ -235,11 +235,6 @@ def property_source_distributions(db: IdPPdb) -> Dict[str, int]:
     return results
 
 
-# TODO: use fingerprinting and clustering or PCA or something to show the diversity of 
-#       compounds in the database. This comparison can be made at the level of 
-#       Compounds, Adducts, and property tables (RTs, CCSs, MS2Spectra)
-
-
 def _main() -> None:
 
     # parse CLI args

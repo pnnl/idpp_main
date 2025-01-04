@@ -200,12 +200,6 @@ class IdPPdb():
     #       data in like a polars dataframe or something like that. Might be easier
     #       to integrate into other people's workflows that way.
 
-    # TODO: Is it possible/worth it to have spectrum combination be optional? 
-    #           > Spectrum combination is now optional at the level of this interface
-    #       Would this be more suited as some sort of configuration option somehow 
-    #       stored within the database? 
-    #           > Possibly, so I will keep these comments in place.
-
     # TODO: In the docstrings of all insert_X methods, indicate whether the method
     #       is a check_insert or nocheck_insert operation
 

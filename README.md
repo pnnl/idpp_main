@@ -40,6 +40,8 @@ Jupyter notebooks and Python scripts with code for assembling and cleaning the I
 ## Documentation 
 Documentation for selected components of the IdPP codebase (_i.e._ the `idpp` Python package)
 
+> current idpp package version: 0.12.24
+
 ### IdPP database
 - [builder](docs/idpp_db_builder.pdf)
 - [interface](docs/idpp_db_interface.pdf)
