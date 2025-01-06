@@ -50,3 +50,6 @@ Documentation for selected components of the IdPP codebase (_i.e._ the `idpp` Py
 - [MS2 spectrum similarity](docs/msms_utils.pdf)
 - [identification probability tree data structures](docs/probability_trees.pdf)
 
+## Related Repositories
+- [molecular property prediction workflow](https://github.com/pnnl/idpp_workflow)
+- [retention time prediction model](https://github.com/pnnl/idpp_rtp)
